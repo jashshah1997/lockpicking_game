@@ -33,6 +33,9 @@ public class LockPickingController : MonoBehaviour
 
     private Animator m_lock_animator;
     private GameObject m_lockpick;
+    private AudioSource m_unlock_sound;
+    private AudioSource m_lockpick_shake_sound;
+    private AudioSource m_lockpick_break_sound;
 
     public readonly int lockHash = Animator.StringToHash("LockBlend");
     public readonly int lockPickHash = Animator.StringToHash("LockPickBlend");
@@ -43,6 +46,9 @@ public class LockPickingController : MonoBehaviour
     {
         m_lock_animator = GetComponent<Animator>();
         m_lockpick = GameObject.Find("Lockpick");
+        m_unlock_sound = GameObject.Find("UnlockSound").GetComponent<AudioSource>();
+        m_lockpick_shake_sound = GameObject.Find("LockPickShakeSound").GetComponent<AudioSource>();
+        m_lockpick_break_sound = GameObject.Find("LockPickBreakSound").GetComponent<AudioSource>();
         InitializeLock();
     }
 
@@ -102,6 +108,9 @@ public class LockPickingController : MonoBehaviour
 
         if (maxRotation - m_lock_position < 0.05)
         {
+            if (!m_lockpick_shake_sound.isPlaying)
+                m_lockpick_shake_sound.Play();
+
             m_lock_animator.SetBool(lockpickShakeHash, true);
             m_shaking_time += Time.deltaTime * LockPickBreakingSpeed;
 
@@ -114,13 +123,16 @@ public class LockPickingController : MonoBehaviour
         {
             m_lock_animator.SetBool(lockpickShakeHash, false);
             m_shaking_time = 0;
+            m_lockpick_shake_sound.Stop();
         }
     }
 
     private void OnWinGame()
     {
         Debug.Log("Unlocked!");
+        m_unlock_sound.Play();
         m_lock_animator.SetBool(lockpickShakeHash, false);
+        m_lockpick_shake_sound.Stop();
         m_game_paused = true;
     }
 
@@ -128,6 +140,7 @@ public class LockPickingController : MonoBehaviour
     {
         m_target_lockpick_position = Random.value;
         m_shaking_time = 0;
+        m_lockpick_shake_sound.Stop();
     }
 
 
@@ -137,7 +150,9 @@ public class LockPickingController : MonoBehaviour
         {
             Debug.Log("The lockpick broke!");
             m_shaking_time = 0;
+            m_lockpick_shake_sound.Stop();
             m_lockpick.SetActive(false);
+            m_lockpick_break_sound.Play();
         }
 
         if (m_lock_position < 0.01)
