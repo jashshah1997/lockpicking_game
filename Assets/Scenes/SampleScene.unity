@@ -460,7 +460,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96c5bea3e03cf264a9a7240f3153fb5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PickRotationSpeed: 1
+  PickRotationSpeed: 0.5
+  LockRoatationSpeed: 1
+  LockResetSpeed: 0.4
+  LockThreshold: 0.1
 --- !u!1001 &1563493166
 PrefabInstance:
   m_ObjectHideFlags: 0
