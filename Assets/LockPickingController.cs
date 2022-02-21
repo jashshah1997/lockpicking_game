@@ -143,6 +143,12 @@ public class LockPickingController : MonoBehaviour
         m_lockpick_shake_sound.Stop();
     }
 
+    public void Reset()
+    {
+        m_game_paused = false;
+        m_lockpick_position = 0.5f;
+        m_lock_position = 0f;
+    }
 
     private void OnLockPickBreak()
     {
