@@ -33,6 +33,8 @@ public class LockPickingController : MonoBehaviour
 
     private Animator m_lock_animator;
     private GameObject m_lockpick;
+    private GameManager m_game_manager;
+
     private AudioSource m_unlock_sound;
     private AudioSource m_lockpick_shake_sound;
     private AudioSource m_lockpick_break_sound;
@@ -46,6 +48,7 @@ public class LockPickingController : MonoBehaviour
     {
         m_lock_animator = GetComponent<Animator>();
         m_lockpick = GameObject.Find("Lockpick");
+        m_game_manager = GameObject.Find("GameManager").GetComponent<GameManager>();
         m_unlock_sound = GameObject.Find("UnlockSound").GetComponent<AudioSource>();
         m_lockpick_shake_sound = GameObject.Find("LockPickShakeSound").GetComponent<AudioSource>();
         m_lockpick_break_sound = GameObject.Find("LockPickBreakSound").GetComponent<AudioSource>();
@@ -159,6 +162,7 @@ public class LockPickingController : MonoBehaviour
             m_lockpick_shake_sound.Stop();
             m_lockpick.SetActive(false);
             m_lockpick_break_sound.Play();
+            m_game_manager.DecreasePickLockCount();
         }
 
         if (m_lock_position < 0.01)
