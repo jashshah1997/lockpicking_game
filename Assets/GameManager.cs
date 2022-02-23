@@ -4,6 +4,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+public class EasySettings
+{
+    public static float LockThreshold = 0.2f;
+    public static float LockPickBreakingSpeed = 0.5f;
+};
+
+public class MediumSettings
+{
+    public static float LockThreshold = 0.1f;
+    public static float LockPickBreakingSpeed = 1f;
+};
+
+public class HardSettings
+{
+    public static float LockThreshold = 0.05f;
+    public static float LockPickBreakingSpeed = 2f;
+};
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
@@ -89,6 +107,28 @@ public class GameManager : MonoBehaviour
 
     void OnStartGameClicked()
     {
+        int diff = m_difficulty_dropdown.GetComponent<Dropdown>().value;
+        float lockpickBreakingSpeed = -1f;
+        float lockThreshold = -1f;
+        switch (diff)
+        {
+            case 0:
+                lockpickBreakingSpeed = EasySettings.LockPickBreakingSpeed;
+                lockThreshold = EasySettings.LockThreshold;
+                break;
+            case 1:
+                lockpickBreakingSpeed = MediumSettings.LockPickBreakingSpeed;
+                lockThreshold = MediumSettings.LockThreshold;
+                break;
+            case 2:
+                lockpickBreakingSpeed = HardSettings.LockPickBreakingSpeed;
+                lockThreshold = HardSettings.LockThreshold;
+                break;
+        }
+
+        m_lock.GetComponent<LockPickingController>().LockPickBreakingSpeed = lockpickBreakingSpeed;
+        m_lock.GetComponent<LockPickingController>().LockThreshold = lockThreshold;
+
         m_game_over = false;
         ToggleUI(true);
         m_lock.GetComponent<LockPickingController>().Reset();
@@ -98,6 +138,8 @@ public class GameManager : MonoBehaviour
             m_reinitialize = false;
             m_lock.GetComponent<LockPickingController>().InitializeLock();
         }
+
+        
     }
 
     void OnBackButtonClicked()
