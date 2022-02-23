@@ -134,12 +134,18 @@ public class LockPickingController : MonoBehaviour
     {
         Debug.Log("Unlocked!");
         m_unlock_sound.Play();
+        PauseGame();
+        m_game_manager.GetComponent<GameManager>().SetEndGame("Unlocked!");
+    }
+
+    public void PauseGame()
+    {
         m_lock_animator.SetBool(lockpickShakeHash, false);
         m_lockpick_shake_sound.Stop();
         m_game_paused = true;
     }
 
-    private void InitializeLock()
+    public void InitializeLock()
     {
         m_target_lockpick_position = Random.value;
         m_shaking_time = 0;
@@ -151,6 +157,7 @@ public class LockPickingController : MonoBehaviour
         m_game_paused = false;
         m_lockpick_position = 0.5f;
         m_lock_position = 0f;
+        m_shaking_time = 0;
     }
 
     private void OnLockPickBreak()

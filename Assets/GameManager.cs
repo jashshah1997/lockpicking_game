@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
 
     private int m_current_lockpick_count;
     private float m_current_time;
+    private bool m_reinitialize = false;
+    private bool m_game_over = false;
 
     private GameObject m_lock;
     private GameObject m_difficulty_dropdown;
@@ -22,6 +24,7 @@ public class GameManager : MonoBehaviour
     private GameObject m_back_button;
     private GameObject m_lockpick_left;
     private GameObject m_time_left;
+    private GameObject m_end_game_label;
 
     // Start is called before the first frame update
     void Start()
@@ -33,11 +36,13 @@ public class GameManager : MonoBehaviour
         m_back_button = GameObject.Find("BackButton");
         m_lockpick_left = GameObject.Find("LockPickLeft");
         m_time_left = GameObject.Find("TimeLeft");
+        m_end_game_label = GameObject.Find("EndGameLabel");
 
         m_lock.SetActive(false);
         m_back_button.SetActive(false);
         m_lockpick_left.SetActive(false);
         m_time_left.SetActive(false);
+        m_end_game_label.SetActive(false);
 
         m_start_game_button.GetComponent<Button>().onClick.AddListener(OnStartGameClicked);
         m_back_button.GetComponent<Button>().onClick.AddListener(OnBackButtonClicked);
@@ -48,9 +53,32 @@ public class GameManager : MonoBehaviour
     {
         if (m_time_left.activeSelf)
         {
-            m_current_time -= Time.deltaTime;
+            if (!m_game_over)
+                m_current_time -= Time.deltaTime;
+
             m_time_left.GetComponent<TextMeshProUGUI>().text = (int)m_current_time + "";
+
+            if (m_current_time < 0)
+            {
+                SetEndGame("Time is Up!");
+            }
+
+            if (m_current_lockpick_count < 1)
+            {
+                SetEndGame("No Lockpicks Left!");
+            }
         }
+    }
+
+    public void SetEndGame(string label)
+    {
+        if (m_end_game_label.activeSelf) return;
+
+        m_game_over = true;
+        m_reinitialize = true;
+        m_end_game_label.SetActive(true);
+        m_end_game_label.GetComponent<TextMeshProUGUI>().text = label;
+        m_lock.GetComponent<LockPickingController>().PauseGame();
     }
 
     public void DecreasePickLockCount()
@@ -61,8 +89,15 @@ public class GameManager : MonoBehaviour
 
     void OnStartGameClicked()
     {
+        m_game_over = false;
         ToggleUI(true);
         m_lock.GetComponent<LockPickingController>().Reset();
+
+        if (m_reinitialize)
+        {
+            m_reinitialize = false;
+            m_lock.GetComponent<LockPickingController>().InitializeLock();
+        }
     }
 
     void OnBackButtonClicked()
@@ -72,6 +107,8 @@ public class GameManager : MonoBehaviour
 
     private void ToggleUI(bool toggle)
     {
+        m_end_game_label.SetActive(false);
+
         m_lock.SetActive(toggle);
         m_back_button.SetActive(toggle);
         m_lockpick_left.SetActive(toggle);
