@@ -147,6 +147,7 @@ public class LockPickingController : MonoBehaviour
 
     public void InitializeLock()
     {
+        Debug.Log("Lock Initialized");
         m_target_lockpick_position = Random.value;
         m_shaking_time = 0;
         m_lockpick_shake_sound.Stop();

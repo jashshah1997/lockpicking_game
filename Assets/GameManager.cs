@@ -3,22 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class EasySettings
 {
-    public static float LockThreshold = 0.2f;
+    public static float LockThreshold = 0.15f;
     public static float LockPickBreakingSpeed = 0.5f;
 };
 
 public class MediumSettings
 {
-    public static float LockThreshold = 0.1f;
+    public static float LockThreshold = 0.08f;
     public static float LockPickBreakingSpeed = 1f;
 };
 
 public class HardSettings
 {
-    public static float LockThreshold = 0.05f;
+    public static float LockThreshold = 0.03f;
     public static float LockPickBreakingSpeed = 2f;
 };
 
@@ -69,6 +70,27 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (m_skill_level.activeSelf)
+        {
+            int val = 20;
+            try
+            {
+                val = Int32.Parse(m_skill_level.GetComponent<TMP_InputField>().text);
+            } catch (Exception)
+            {
+                m_skill_level.GetComponent<TMP_InputField>().text = val + "";
+            }
+            
+            if (val < 0)
+            {
+                m_skill_level.GetComponent<TMP_InputField>().text = "0";
+            } 
+            else if (val > 100)
+            {
+                m_skill_level.GetComponent<TMP_InputField>().text = "100";
+            }
+        }
+
         if (m_time_left.activeSelf)
         {
             if (!m_game_over)
@@ -125,6 +147,11 @@ public class GameManager : MonoBehaviour
                 lockThreshold = HardSettings.LockThreshold;
                 break;
         }
+
+        // Adjust for skill level impact
+        int skill_level = Int32.Parse(m_skill_level.GetComponent<TMP_InputField>().text);
+        lockThreshold += skill_level * 0.1f / 100f;
+        lockpickBreakingSpeed -= skill_level * 0.3f / 100f;
 
         m_lock.GetComponent<LockPickingController>().LockPickBreakingSpeed = lockpickBreakingSpeed;
         m_lock.GetComponent<LockPickingController>().LockThreshold = lockThreshold;
