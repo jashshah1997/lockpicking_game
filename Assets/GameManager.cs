@@ -150,8 +150,8 @@ public class GameManager : MonoBehaviour
 
         // Adjust for skill level impact
         int skill_level = Int32.Parse(m_skill_level.GetComponent<TMP_InputField>().text);
-        lockThreshold += skill_level * 0.1f / 100f;
-        lockpickBreakingSpeed -= skill_level * 0.3f / 100f;
+        lockThreshold += skill_level * 0.2f / 100f;
+        lockpickBreakingSpeed -= skill_level * 0.4f / 100f;
 
         m_lock.GetComponent<LockPickingController>().LockPickBreakingSpeed = lockpickBreakingSpeed;
         m_lock.GetComponent<LockPickingController>().LockThreshold = lockThreshold;
